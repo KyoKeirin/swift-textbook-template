@@ -160,17 +160,32 @@ iTunes Search APIを使って、曲を検索するアプリである。
 
 ```swift
 // 該当部分のコードを抜粋して貼る
+struct SearchResponse: Codable {
+    let results: [Song]
+}
+
+struct Song: Codable, Identifiable {
+    let trackId: Int
+    let trackName: String
+    let artistName: String
+    let artworkUrl100: String
+    let previewUrl: String?
+    
+    var id: Int { trackId }
+}
 ```
 
 **何をしているか：**
 （この部分が果たしている役割を説明する）
+APIから届くデータがSwiftで使えるようにする。
 
 **なぜこう書くのか：**
 （別の書き方ではなく、この書き方が選ばれている理由を説明する）
+SwiftUIでの表示と、型安全なデータ操作を両立させるためです。
 
 **もしこう書かなかったら：**
 （この部分を省略したり変えたりすると何が起きるか。実際に試した結果があればここに書く）
-
+こうみたいに厳しく打たないと、エラーがなりやすいし、画面もなにも出ないし、必要がある。
 ---
 
 ### API通信の処理
