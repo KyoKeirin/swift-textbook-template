@@ -262,56 +262,80 @@ struct Landmark: Identifiable {
 ```
 
 **何をしているか：**
-（この部分が果たしている役割を説明する）
+ランドマーク１件分の情報を定義し、カテゴリーごとにアイコンを決めている。
 
 **なぜこう書くのか：**
-（別の書き方ではなく、この書き方が選ばれている理由を説明する）
+大きな理由は、データと表示ルールを整理して安全に扱うためだ。
 
 **もしこう書かなかったら：**
-（この部分を省略したり変えたりすると何が起きるか。実際に試した結果があればここに書く）
+Identifiableがなかったら、List や ForEach で使う時に困ることがある。例えば、名前が重複したりすることもある。
 
 ---
 
 ### 地図の表示とカメラ制御
 
 ```swift
-// 該当部分のコードを抜粋して貼る
+@State private var cameraPosition: MapCameraPosition = .region(
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 35.6812, longitude: 139.7671),
+            span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08)
+        )
+    )
 
 ```
 
 **何をしているか：**
+地図をどこに、どれくらいの拡大率で表示するかを決める。
 
 **なぜこう書くのか：**
+地図の表示位置を SwiftUI の状態として管理したいから。
 
 **もしこう書かなかったら：**
+cameraPosition がなかったら、初期表示位置を指定しにくい。
 
 ---
 
 ### マーカーの表示
 
 ```swift
-// 該当部分のコードを抜粋して貼る
+Map(position: $cameraPosition) {
+                ForEach(filteredLandmarks) { landmark in
+                    Marker(
+                        landmark.name,
+                        systemImage: landmark.category.iconName,
+                        coordinate: landmark.coordinate
+                    )
+                    .tint(landmark.category.color)
+                }
+            }
+            .mapStyle(.standard(elevation: .realistic))
 ```
 
 **何をしているか：**
+地図を表示している、
 
 **なぜこう書くのか：**
+データの数だけ自動でマーカーを表示できるから。
 
 **もしこう書かなかったら：**
+ForEach を使わなかったら、一件ずつ手で打つ必要がある。
 
 ---
 
 ### フィルター機能
 
 ```swift
-// 該当部分のコードを抜粋して貼る
+    @State private var selectedCategories: Set<Landmark.Category> = Set(Landmark.Category.allCases)
 ```
 
 **何をしているか：**
+選択されたカテゴリーを保存している。
 
 **なぜこう書くのか：**
+Setは重複の内周後で、コテゴリーの選択状態を管理するにはぴったりだ。
 
 **もしこう書かなかったら：**
+Setを使わずに普通のArrayだったら、追加する時に重複チェックが必要になる。
 
 ---
 
@@ -323,8 +347,8 @@ struct Landmark: Identifiable {
 |------|------|--------|
 | 例：`Map` | SwiftUIで地図を表示するビューコンポーネント | `Map(position: .constant(.region(region)))` |
 | 例：`Marker` | 地図上に位置をマーキングするコンポーネント | `Marker("名前", coordinate: coordinate)` |
-| | | |
-| | | |
+| enum | 決まった選択肢を作るためのものである | enum Category: String { case temple = "寺社" case tower = "タワー" case park = "公園"} |
+| @Binding | 親ビューの @State を子ビューから変更するためのものである | CategoryFilter(selectedCategories: $selectedCategories) @Binding var selectedCategories: Set<Landmark.Category> |
 | | | |
 
 ## 自分の実験メモ
@@ -332,14 +356,14 @@ struct Landmark: Identifiable {
 （模範コードを改変して試したことを書く）
 
 **実験1：**
-- やったこと：
-- 結果：
-- わかったこと：
+- やったこと： span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08) →  span: MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)。
+- 結果：アプリを開き直すと、より広い範囲の地図が表示された。
+- わかったこと：MKCoordinateSpan の数値を大きくすると地図の表示範囲が広くなること。
 
 **実験2：**
-- やったこと：
-- 結果：
-- わかったこと：
+- やったこと：sampleData の「上野恩賜公園」というデータを追加した。
+- 結果：地図上に新しいマーカーが表示される。
+- わかったこと：地図に表示される内容は sampleDate の配列から作られていること。
 
 ## AIに聞いて特に理解が深まった質問 TOP3
 
@@ -353,5 +377,4 @@ struct Landmark: Identifiable {
    **得られた理解：**
 
 ## この章のまとめ
-
-（この章で学んだ最も重要なことを、未来の自分が読み返したときに役立つように書く）
+データの状態を管理し、その状態に応じて画面を自動的に変化させるという考え方を中心に、地図表示、フィルタリング機能、親子ビューの間のデータ共有などの基本的な方法を学んだ。
