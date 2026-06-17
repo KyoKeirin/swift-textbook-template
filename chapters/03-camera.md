@@ -1,7 +1,7 @@
 # 第3章：カメラの利用
 
-> 執筆者：許 敬林
-> 最終更新：YYYY-MM-DD
+> 執筆者：25CM0110
+> 最終更新：2026-06-DD
 
 ## この章で学ぶこと
 
@@ -10,9 +10,6 @@
 例：この章では、PhotosPickerでフォトライブラリから写真を選択し、UIImagePickerControllerでカメラ撮影した画像を扱う方法を学ぶ。具体的には非同期で画像データを読み込み、UIViewControllerRepresentableを使ってUIKitをSwiftUIに統合し、Coordinatorパターンを使ってカメラ機能と連携するアプリを題材にする。
 
 ## 模範コードの全体像
-
-（教員から配布された模範コードをここに貼り付ける）
-
 ```swift
 import SwiftUI
 import PhotosUI
