@@ -5,9 +5,7 @@
 
 ## この章で学ぶこと
 
-（この章で扱うトピックの概要を2〜3行で書く。自分の言葉で。）
-
-例：この章では、PhotosPickerでフォトライブラリから写真を選択し、UIImagePickerControllerでカメラ撮影した画像を扱う方法を学ぶ。具体的には非同期で画像データを読み込み、UIViewControllerRepresentableを使ってUIKitをSwiftUIに統合し、Coordinatorパターンを使ってカメラ機能と連携するアプリを題材にする。
+写真ライブラリから画像を選択し、SwiftUIで表示する方法を学ぶ。また、フィルターで加工して実装することで、画像の扱い方や、写真編集など学ぶことができる。
 
 ## 模範コードの全体像
 ```swift
@@ -247,70 +245,154 @@ struct ContentView: View {
 
 **このアプリは何をするものか：**
 
-（アプリの動作を自分の言葉で説明する。スクリーンショットを貼ってもよい。）
+ユーザーが写真を選び、フィルターを適用し、加工後の画像を保存できるようにするアプリである。
 
 ## コードの詳細解説
 
 ### PhotosPickerによる写真選択
 
 ```swift
-// 該当部分のコードを抜粋して貼る
+    PhotosPicker(selection: $selectedItem, matching: .images) {
+        Label("写真を選ぶ", systemImage: "photo")
+    }
+    .buttonStyle(.bordered)
 ```
 
 **何をしているか：**
-（この部分が果たしている役割を説明する）
+画面には「写真を選ぶ」というボタンを追加して、そのボタンを押すと、iPhoneの写真ライブラリが開く。
 
 **なぜこう書くのか：**
-（別の書き方ではなく、この書き方が選ばれている理由を説明する）
+「PhotosPicker」は公式のライブラリで、セキュリティを確保しながら簡単に写真を選択することができる。
 
 **もしこう書かなかったら：**
-（この部分を省略したり変えたりすると何が起きるか。実際に試した結果があればここに書く）
+UIKit の PHPickerViewController とか UIImagePickerController も使えるが、PhotosPicker ほど便利ではない。
 
 ---
 
 ### 画像の非同期読み込み
 
 ```swift
-// 該当部分のコードを抜粋して貼る
+    func loadOriginalImage(from item: PhotosPickerItem?) async {
+        guard let item = item else { return }
+
+        do {
+            if let data = try await item.loadTransferable(type: Data.self),
+               let uiImage = UIImage(data: data) {
+                originalUIImage = uiImage
+                currentFilter = .original
+                displayImage = Image(uiImage: uiImage)
+            }
+        } catch {
+            print("画像読み込みエラー: \(error)")
+        }
+    }
 ```
 
 **何をしているか：**
+PhotosPicker で選ばれた写真を読み込んで、画面に表示する処理である。
 
 **なぜこう書くのか：**
+写真の読み込みは時間がかかる可能性があるため。
 
 **もしこう書かなかったら：**
+「guard let」がないと、写真が選ばれていないまま処理されると、エラーになる。
+「try await」がないと、写真の読み込み処理を正しく待てない。
 
 ---
 
 ### UIViewControllerRepresentableによるカメラ連携
 
 ```swift
-// 該当部分のコードを抜粋して貼る
+struct CameraView: UIViewControllerRepresentable {
+    @Binding var capturedImage: UIImage?
+    @Environment(\.dismiss) private var dismiss
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: CameraView
+
+        init(_ parent: CameraView) {
+            self.parent = parent
+        }
+
+        func imagePickerController(
+            _ picker: UIImagePickerController,
+            didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+        ) {
+            if let image = info[.originalImage] as? UIImage {
+                parent.capturedImage = image
+            }
+            parent.dismiss()
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.dismiss()
+        }
+    }
+}
+
 ```
 
 **何をしているか：**
+撮影した写真をSwiftUIに渡す。
 
 **なぜこう書くのか：**
+SwiftUI と UIKitをスムーズに連携させるため。
 
 **もしこう書かなかったら：**
+UIImagePickerControllerはUIKit の機能なので、こう書かないと SwiftUI で直接使いにくい。
 
 ---
 
 ### Coordinatorパターン
 
 ```swift
-// 該当部分のコードを抜粋して貼る
+class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: CameraView
+
+        init(_ parent: CameraView) {
+            self.parent = parent
+        }
+
+        func imagePickerController(
+            _ picker: UIImagePickerController,
+            didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+        ) {
+            if let image = info[.originalImage] as? UIImage {
+                parent.capturedImage = image
+            }
+            parent.dismiss()
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.dismiss()
+        }
+    }
 ```
 
 **何をしているか：**
+画像が選択されたときやキャンセルされた時の処理を担当している。
 
 **なぜこう書くのか：**
+UIImagePickerControllerDelegate は UIKit の機能であり、画像選択やキャンセルの結果を Delegate パターンで通知する仕組みになっている。
 
 **もしこう書かなかったら：**
+Coordinator がない場合、画像が選択されたことを受け取れない。
 
 ---
 
-（必要に応じてセクションを増やす）
 
 ## 新しく学んだSwiftの文法・API
 
@@ -318,18 +400,23 @@ struct ContentView: View {
 |------|------|--------|
 | 例：`PhotosPicker` | フォトライブラリから画像を選択するコンポーネント | `PhotosPicker(selection: $selectedItem, matching: .images)` |
 | 例：`UIImagePickerController` | カメラまたはフォトライブラリにアクセスするUIKitコンポーネント | `picker.sourceType = .camera` |
-| | | |
-| | | |
-| | | |
+| `UIImagePickerControllerDelegate` | 写真選択や撮影結果を受け取るためのデリゲート | 撮影した画像を取得して画面に表示する |
+| `CIFilter` | 画像にフィルター効果を適用する Core Image の API | セピアやモノクロなどの加工を行う |
+| `dissmiss()` | 表示中のカメラ画面や選択画面を閉じる処理 | 撮影ごやキャンセル後に元の画面へ戻る |
 
 ## 自分の実験メモ
 
-（模範コードを改変して試したことを書く）
+```
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        print("キャンセルしました")
+        parent.dismiss()
+    }
+```
 
 **実験1：**
-- やったこと：
-- 結果：
-- わかったこと：
+- やったこと：「imagePickerControllerDidCancel」という関数の「parent.dismiss()」の上に「print("キャンセルしました")」を追加した。
+- 結果：閉じる時お知らせが出てくる
+- わかったこと：Coordinatorに自分の好きな関数が入れる。
 
 **実験2：**
 - やったこと：
