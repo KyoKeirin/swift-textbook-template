@@ -1,7 +1,7 @@
 # 第3章：カメラの利用
 
 > 執筆者：25CM0110
-> 最終更新：2026-06-DD
+> 最終更新：2026-06-21
 
 ## この章で学ぶこと
 
@@ -400,9 +400,9 @@ Coordinator がない場合、画像が選択されたことを受け取れな�
 |------|------|--------|
 | 例：`PhotosPicker` | フォトライブラリから画像を選択するコンポーネント | `PhotosPicker(selection: $selectedItem, matching: .images)` |
 | 例：`UIImagePickerController` | カメラまたはフォトライブラリにアクセスするUIKitコンポーネント | `picker.sourceType = .camera` |
-| `UIImagePickerControllerDelegate` | 写真選択や撮影結果を受け取るためのデリゲート | 撮影した画像を取得して画面に表示する |
-| `CIFilter` | 画像にフィルター効果を適用する Core Image の API | セピアやモノクロなどの加工を行う |
-| `dissmiss()` | 表示中のカメラ画面や選択画面を閉じる処理 | 撮影ごやキャンセル後に元の画面へ戻る |
+| `UIImagePickerControllerDelegate` | 写真選択や撮影結果を受け取るためのデリゲート | ` class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {...}` |
+| `CIFilter` | 画像にフィルター効果を適用する Core Image の API | ` let filter = CIFilter.sepiaTone()`|
+| `dissmiss()` | 表示中のカメラ画面や選択画面を閉じる処理 | `parent.dismiss()` |
 
 ## 自分の実験メモ
 
@@ -419,21 +419,29 @@ Coordinator がない場合、画像が選択されたことを受け取れな�
 - わかったこと：Coordinatorに自分の好きな関数が入れる。
 
 **実験2：**
-- やったこと：
-- 結果：
-- わかったこと：
+- やったこと：「filter.intensity = 0.8」の値を「1.0」を変えた。
+- 結果：かなり古い写真っぽくなった。
+- わかったこと：値が高いほど、昔の写真みたいになる。
 
 ## AIに聞いて特に理解が深まった質問 TOP3
 
 1. **質問：**
+   Swift の　「UIViewControllerRepresentable」って何？
+   
    **得られた理解：**
-
-2. **質問：**
-   **得られた理解：**
-
+   UIKit の 「ViewController」を SwiftUI の中で使えるようにする橋渡しみたいなものである。
+   
 3. **質問：**
+   Swift の　「CaseIterable」って何？
+   
    **得られた理解：**
+   enum に書いた選択しを Swift が自動で一覧化してくれる。
+
+4. **質問：**
+   Swift の　「CIImage」って何？
+   
+   **得られた理解：**
+   「CIImage」はフィルター処理用の画像で、「UIImage」は表示用の画像である。
 
 ## この章のまとめ
-
-（この章で学んだ最も重要なことを、未来の自分が読み返したときに役立つように書く）
+SwiftUI で写真を選び、Core Image でフィルターをかけ、プレビュー表示し、加工後の写真を保存する方法を学んだ。
