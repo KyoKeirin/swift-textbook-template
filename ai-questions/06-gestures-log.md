@@ -9,7 +9,7 @@ Gemini
 ### Q1
 
 **質問：**
-SwiftUIの`.onTapGesture`と`.gesture(DragGesture())`は何が違いますか。初心者にも分かるように説明してください。
+SwiftUIの`.onTapGesture`と`.gesture(DragGesture())`は何が違うの？
 
 **AIの回答の要点：**
 `.onTapGesture`はタップだけを簡単に書くための便利な書き方である。一方、`.gesture(DragGesture())`は、ドラッグのように操作中の値を受け取りたい時に使う。`DragGesture`では`.onChanged`や`.onEnded`を書けるので、動いている途中と終わった時の処理を分けられる。
@@ -31,7 +31,7 @@ SwiftUIの`.onTapGesture`と`.gesture(DragGesture())`は何が違いますか。
 ### Q3
 
 **質問：**
-`.animation(.spring(duration: 0.3), value: isPressed)`と`withAnimation(.spring)`の違いは何ですか。
+`.animation(.spring(duration: 0.3), value: isPressed)`と`withAnimation(.spring)`の違いは何？
 
 **AIの回答の要点：**
 `.animation(..., value:)`は、指定した`value`が変化した時に、そのビューの変化へアニメーションを付ける書き方である。`withAnimation`は、そのブロックの中で行った状態変更にアニメーションを付ける書き方である。どちらもアニメーションを付けるが、使う場所と対象が少し違う。
