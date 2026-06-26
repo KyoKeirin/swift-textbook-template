@@ -445,17 +445,17 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 ## AIに聞いて特に理解が深まった質問 TOP3
 
 1. **質問：**  
-   `CMMotionManager`は何をするためのクラスですか。  
+   `CMMotionManager`は何をするためのクラスなの？  
    **得られた理解：**  
    端末の加速度、回転、姿勢などのセンサー情報を取得するための管理クラスだと分かった。今回のコードでは、`deviceMotion`を使って`pitch`、`roll`、`yaw`を取得している。
 
 2. **質問：**  
-   `pitch`、`roll`、`yaw`の違いは何ですか。  
+   `pitch`、`roll`、`yaw`の違いは何？  
    **得られた理解：**  
    `pitch`は前後の傾き、`roll`は左右の傾き、`yaw`は水平回転を表す。水平器では主に`pitch`と`roll`が重要で、`yaw`は回転方向の確認に使える。
 
 3. **質問：**  
-   なぜ`onDisappear`で`stopUpdates()`を呼ぶ必要がありますか。  
+   なぜ`onDisappear`で`stopUpdates()`を呼ぶ必要がある？  
    **得られた理解：**  
    センサーはリアルタイムで動き続けるため、使わない時は止めた方がよい。止めないと、画面を閉じた後も処理が続き、バッテリー消費の原因になると理解した。
 
