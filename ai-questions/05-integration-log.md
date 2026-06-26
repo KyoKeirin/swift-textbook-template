@@ -9,7 +9,7 @@ Gemini
 ### Q1
 
 **質問：**  
-`@Query private var records: [PhotoRecord]`は何をしていますか？
+`@Query private var records: [PhotoRecord]`は何をしている？
 
 **AIの回答の要点：**  
 `@Query`はSwiftDataに保存されているデータを自動で読み込むためのもの。`records`には保存済みの`PhotoRecord`が入る。データが追加・削除されると、画面も自動で更新される。
@@ -20,7 +20,7 @@ Gemini
 ### Q2
 
 **質問：**  
-なぜ写真を`Image`ではなく`Data?`として保存していますか？
+なぜ写真を`Image`ではなく`Data?`として保存している？
 
 **AIの回答の要点：**  
 `Image`はSwiftUIで画面に表示するための型で、保存用のデータではない。写真を保存してあとから再表示するためには、画像の元データを`Data`として保存する必要がある。`Data?`にしているので、写真がない場合にも対応できる。
