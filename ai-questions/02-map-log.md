@@ -9,10 +9,10 @@ Gemini
 ### Q1
 
 **質問：**
-`@AppStorage` と SwiftData は、何が違うの？
+`MapCameraPosition` と `MKCoordinateRegion` は何のために使うの？
 
 **AIの回答の要点：**
-`@AppStorage` は、ユーザー名や表示設定のような小さな設定値を保存するのに向いている。内部的には `UserDefaults` を使い、アプリを閉じても値が残る。一方、SwiftData はメモのタイトル・本文・作成日・お気に入り状態のように、構造を持った複数のデータを保存・検索・削除するのに向いている。このアプリでは `userName` と `sortByFavorite` を `@AppStorage` で保存し、`Memo` の一覧は SwiftData で保存している。
+`MapCameraPosition` は SwiftUI の `Map` がどの場所を、どの範囲で表示するかを管理するための状態である。`MKCoordinateRegion` は地図の表示範囲を表する。
 
 **自分の理解：**
 地図を表示するだけでなく、「どこを中心に見せるか」「どれくらい拡大するか」を決めるために `MapCameraPosition` と `MKCoordinateRegion` を使うと理解した。
